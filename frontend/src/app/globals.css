@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Manrope", sans-serif;
+  --color-brand-peach-50: #FCF9F7;
+  --color-brand-peach-100: #F7EAE3;
+  --color-brand-peach-200: #F2D5C9;
+  --color-brand-peach-500: #E08A68;
+  --color-brand-brown-500: #7A5C4F;
+  --color-brand-brown-700: #4a332a;
+  --color-brand-brown-900: #2C1E16;
+  
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
+  --shadow-elegant: 0 10px 40px -10px rgba(44, 30, 22, 0.08);
+  --shadow-subtle: 0 4px 20px -5px rgba(44, 30, 22, 0.05);
+}
+
+:root {
+  --background: var(--color-brand-peach-50);
+  --foreground: var(--color-brand-brown-900);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.bg-dots-pattern {
+  background-image: radial-gradient(var(--color-brand-peach-200) 1px, transparent 1px);
+  background-size: 24px 24px;
+}

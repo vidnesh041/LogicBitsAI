@@ -1,0 +1,38 @@
+# Environment variables & Credentials (CRITICAL SECURITY)
+.env
+*.env
+.env.local
+.env.*.local
+*.env.production
+backend/.env
+frontend/.env
+frontend/.env.local
+*serviceAccount*.json
+*service-account*.json
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+backend/venv/
+.pytest_cache/
+
+# Node & Next.js
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+*.tsbuildinfo
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Firebase debug logs
+firebase-debug.log
+firebase-debug.*.log
