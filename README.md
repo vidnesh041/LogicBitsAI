@@ -109,7 +109,18 @@ npm run dev
 5. Add the backend Environment Variables in Render Dashboard.
 
 ### Deploy Frontend to Vercel
-1. Import your GitHub repository into Vercel.
+
+#### Option A: Vercel Web Dashboard (Recommended for Auto-Deployments)
+1. Go to [Vercel Dashboard](https://vercel.com/new) and import your GitHub repository (`vidnesh041/LogicBitsAI`).
 2. Set **Root Directory** to `frontend`.
-3. Add `NEXT_PUBLIC_API_URL` pointing to your deployed Render URL.
-4. Deploy!
+3. Under **Environment Variables**, add:
+   - `NEXT_PUBLIC_API_URL` = `https://your-backend-service.onrender.com` (Render Backend URL)
+   - Firebase variables: `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, etc.
+4. Click **Deploy**. Any future `git push` to `main` automatically deploys updates.
+
+#### Option B: Vercel CLI Deployment
+```bash
+cd frontend
+npx vercel --prod
+```
+
