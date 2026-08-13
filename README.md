@@ -61,7 +61,22 @@ Configure this environment variable in your Vercel project settings:
 
 ## 🚀 Local Development Guide
 
-### 1. Start the FastAPI Backend
+### Single-Command Full-Stack Startup (Recommended)
+From the root project folder, simply run:
+```bash
+npm install     # Installs root runner dependencies
+npm run dev     # Boots BOTH FastAPI backend (8000) and Next.js frontend (3000) concurrently
+```
+- **Frontend Dashboard**: `http://localhost:3000/dashboard`
+- **Backend API**: `http://localhost:8000`
+- **Swagger Docs**: `http://localhost:8000/docs`
+- **Health Check**: `http://localhost:8000/health`
+
+---
+
+### Manual / Individual Component Startup
+
+#### 1. Start the FastAPI Backend
 ```bash
 cd backend
 python -m venv venv
@@ -73,19 +88,16 @@ source venv/bin/activate
 pip install -r requirements.txt
 python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
-- **Backend API**: `http://localhost:8000`
-- **Swagger Docs**: `http://localhost:8000/docs`
-- **Health Check**: `http://localhost:8000/health`
 
-### 2. Start the Next.js Frontend
+#### 2. Start the Next.js Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-- **Frontend Dashboard**: `http://localhost:3000/dashboard`
 
 ---
+
 
 ## ☁️ Deployment Instructions
 
