@@ -417,20 +417,6 @@ function buildYouTubeCloneCode(): string {
         <div id="comments-box" class="space-y-2 text-xs"><p><strong class="text-white">Alex:</strong> Clean playback controls and UI!</p></div>
       </div>
     </main>
-    <aside class="w-80 space-y-3 hidden lg:block" id="recs-box"></aside>
-  </div>
-  <script>
-    const list = [
-      { id: '1', title: 'Building Autonomous Multi-Agent AI Swarms', thumb: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&auto=format&fit=crop&q=80', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
-      { id: '2', title: 'Next.js 16 & Tailwind CSS Masterclass', thumb: 'https://images.unsplash.com/photo-1618401471353-b98aedd04e11?w=400&auto=format&fit=crop&q=80', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4' }
-    ];
-    function renderRecs(f = '') {
-      document.getElementById('recs-box').innerHTML = list.filter(v => v.title.toLowerCase().includes(f.toLowerCase())).map(v => \`
-        <div onclick="switchVid('\${v.id}')" class="flex gap-2 cursor-pointer p-1.5 rounded-xl hover:bg-zinc-900">
-          <img src="\${v.thumb}" class="w-32 aspect-video object-cover rounded-lg">
-          <h4 class="text-xs font-bold text-white line-clamp-2">\${v.title}</h4>
-        </div>
-      \`).join('');
     }
     function switchVid(id) { const v = list.find(x => x.id === id); document.getElementById('vid-title').innerText = v.title; document.getElementById('player').src = v.url; document.getElementById('player').play(); }
     function addComment(e) { e.preventDefault(); const inp = document.getElementById('comm-input'); if(inp.value.trim()){ const p = document.createElement('p'); p.innerHTML = '<strong>You:</strong> ' + inp.value; document.getElementById('comments-box').prepend(p); inp.value=''; } }
