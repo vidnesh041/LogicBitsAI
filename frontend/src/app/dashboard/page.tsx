@@ -870,7 +870,7 @@ function DashboardView() {
       setActiveTab("execution");
     } catch (err: unknown) {
       console.warn("Backend execution API unreachable; executing Standalone Client Swarm Engine:", err);
-      const fallbackExec = generateClientSideExecution(
+      const fallbackExec = await generateClientSideExecution(
         (result as any).goal || goal || result.analysis?.goal || "Goal",
         result.domain || result.analysis?.domain || "General",
         result.roles || result.organization?.roles || []
