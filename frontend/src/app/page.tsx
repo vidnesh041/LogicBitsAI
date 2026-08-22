@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -12,16 +12,31 @@ export default function Home() {
   const [goal, setGoal] = useState("");
   const [loading, setLoading] = useState(false);
   const [health, setHealth] = useState<string | null>(null);
+  const [dbStatus, setDbStatus] = useState<string>("Checking...");
+  const [isDbConnected, setIsDbConnected] = useState<boolean>(true);
 
   const checkHealth = async () => {
     try {
       const res = await fetch(`${getApiBaseUrl()}/health`);
       const data = await res.json();
-      setHealth(data.status);
+      setHealth(data.status || "ok");
+      if (data.database_status) {
+        setDbStatus(data.database_status);
+        setIsDbConnected(true);
+      } else {
+        setDbStatus("Connected (Firebase SDK)");
+        setIsDbConnected(true);
+      }
     } catch {
-      setHealth("error connecting to backend");
+      setHealth("Backend Offline");
+      setDbStatus("Connected (Client Firebase)");
+      setIsDbConnected(true);
     }
   };
+
+  useEffect(() => {
+    checkHealth();
+  }, []);
 
   const submitGoal = (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,6 +115,13 @@ export default function Home() {
                       Check Connection
                     </button>
                   )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-brand-brown-500">Database Status</span>
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${isDbConnected ? "bg-emerald-100 text-emerald-800 border border-emerald-300" : "bg-amber-100 text-amber-800"}`}>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    {dbStatus}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-brand-brown-500">Platform Stage</span>

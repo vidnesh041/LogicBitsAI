@@ -2,7 +2,10 @@ import json
 import logging
 from .models import GoalAnalysis, AgentRole, Subtask, OrganizationPlan
 from typing import List
-from ..ai.model_provider import get_provider
+try:
+    from ai.model_provider import get_provider
+except ImportError:
+    from ..ai.model_provider import get_provider
 
 logger = logging.getLogger(__name__)
 

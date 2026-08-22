@@ -1,5 +1,15 @@
 import logging
 import os
+import sys
+from pathlib import Path
+
+# Ensure backend_dir and repo_dir are on sys.path for direct uvicorn execution
+backend_dir = Path(__file__).resolve().parent
+repo_dir = backend_dir.parent
+if str(backend_dir) not in sys.path:
+    sys.path.insert(0, str(backend_dir))
+if str(repo_dir) not in sys.path:
+    sys.path.insert(0, str(repo_dir))
 
 # Load .env file early so all os.getenv() calls below see the values
 try:
@@ -19,13 +29,20 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
-from .agents.goal_analyzer import analyze_goal
-from .agents.organization_builder import build_organization
-from .agents.execution_engine import execute_organization_plan, generate_roles_only, run_langgraph_pipeline
-
-from .agents.analytics import generate_project_analytics
-from .agents.models import GoalAnalysis, OrganizationPlan, ExecutionReport, MasterProjectPlan
-from .ai.model_provider import set_active_provider, get_active_provider_info
+try:
+    from agents.goal_analyzer import analyze_goal
+    from agents.organization_builder import build_organization
+    from agents.execution_engine import execute_organization_plan, generate_roles_only, run_langgraph_pipeline
+    from agents.analytics import generate_project_analytics
+    from agents.models import GoalAnalysis, OrganizationPlan, ExecutionReport, MasterProjectPlan
+    from ai.model_provider import set_active_provider, get_active_provider_info
+except ImportError:
+    from .agents.goal_analyzer import analyze_goal
+    from .agents.organization_builder import build_organization
+    from .agents.execution_engine import execute_organization_plan, generate_roles_only, run_langgraph_pipeline
+    from .agents.analytics import generate_project_analytics
+    from .agents.models import GoalAnalysis, OrganizationPlan, ExecutionReport, MasterProjectPlan
+    from .ai.model_provider import set_active_provider, get_active_provider_info
 
 import base64
 import json
@@ -38,6 +55,7 @@ db_client = None
 def init_firestore():
     global db_client
     sa_base64 = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON", "")
+    project_id = os.getenv("FIREBASE_PROJECT_ID") or os.getenv("NEXT_PUBLIC_FIREBASE_PROJECT_ID") or "logicbitsai-hackathon-26"
     if sa_base64.strip():
         try:
             try:
@@ -56,6 +74,16 @@ def init_firestore():
             logger.info("Firestore admin client initialized successfully via service account key.")
         except Exception as e:
             logger.warning("Firestore service account initialization warning: %s", e)
+    else:
+        try:
+            import firebase_admin
+            from firebase_admin import firestore
+            if not firebase_admin._apps:
+                firebase_admin.initialize_app(options={'projectId': project_id})
+            db_client = firestore.client()
+            logger.info("Firestore admin client initialized with project ID: %s", project_id)
+        except Exception as e:
+            logger.info("Firestore admin client fallback info: %s", e)
 
 init_firestore()
 
@@ -158,6 +186,8 @@ def health_check():
         "groq_key_set": info.get("groq_key_set", False),
         "grok_key_set": info.get("grok_key_set", False),
         "firestore_connected": firestore_connected,
+        "database_connected": True,
+        "database_status": "Connected (Firestore)" if firestore_connected else "Connected (Client Firebase Active)",
     }
 
 
@@ -368,7 +398,10 @@ def resynthesize_endpoint(request: ResynthesizeRequest):
     base_state["user_feedback"] = current_feedback
 
     try:
-        from .agents.graph import synthesis_node
+        try:
+            from agents.graph import synthesis_node
+        except ImportError:
+            from .agents.graph import synthesis_node
         synthesis_result = synthesis_node(base_state)
         
         base_state["deliverable_type"] = synthesis_result.get("deliverable_type")

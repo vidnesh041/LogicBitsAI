@@ -1,6 +1,9 @@
 import logging
 from typing import List, Dict, Any, Tuple
-from .graph import compiled_graph, generate_roles_logic, GraphState
+try:
+    from agents.graph import compiled_graph, generate_roles_logic, GraphState
+except ImportError:
+    from .graph import compiled_graph, generate_roles_logic, GraphState
 
 logger = logging.getLogger("execution_engine")
 

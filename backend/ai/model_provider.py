@@ -212,8 +212,16 @@ class MockProvider(BaseAIProvider):
         tpl = self._match_template(user_prompt)
         sys_lower = system_prompt.lower()
 
-        # Check if caller expects code or HTML synthesis
-        if "code" in sys_lower or "html" in sys_lower or "synthesis" in sys_lower:
+        # Check if caller expects an expert proposal first
+        if "proposal" in sys_lower or "confidence" in sys_lower or "reasoning" in sys_lower:
+            return {
+                "proposal": f"Detailed operational plan addressing '{user_prompt}' with priority allocation, contingency workflows, and resource mobilization.",
+                "confidence": 0.92,
+                "reasoning": f"This plan leverages domain-specific best practices for {tpl['domain']} to minimize operational risk and optimize execution efficiency."
+            }
+
+        # Check if caller expects HTML synthesis or full code deliverable
+        if "html" in sys_lower or "synthesis" in sys_lower or "deliverable" in sys_lower:
             return {
                 "code": (
                     "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n"
@@ -251,14 +259,6 @@ class MockProvider(BaseAIProvider):
                     "</body>\n</html>"
                 ),
                 "output": f"# Executive Solution Strategy: {user_prompt}\n\n## Implementation Plan\nComprehensive strategy synthesized for {user_prompt}."
-            }
-
-        # Check if caller expects an expert proposal
-        if "proposal" in sys_lower or "confidence" in sys_lower or "reasoning" in sys_lower:
-            return {
-                "proposal": f"Detailed operational plan addressing '{user_prompt}' with priority allocation, contingency workflows, and resource mobilization.",
-                "confidence": 0.92,
-                "reasoning": f"This plan leverages domain-specific best practices for {tpl['domain']} to minimize operational risk and optimize execution efficiency."
             }
             
         # Default role generator response

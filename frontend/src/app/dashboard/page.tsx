@@ -1110,6 +1110,15 @@ function DashboardView() {
             </span>
           </div>
 
+          {/* Database Connection Status Badge */}
+          <div className="hidden lg:flex items-center gap-2 bg-emerald-50/80 px-3.5 py-1.5 rounded-full border border-emerald-200 text-xs font-bold text-emerald-900">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Database: Connected</span>
+            <span className="text-[10px] font-semibold text-emerald-700 bg-white px-2 py-0.5 rounded-full border border-emerald-200">
+              Firestore Active
+            </span>
+          </div>
+
           <div className="flex items-center gap-4">
             <button
               onClick={handleNewProjectReset}

@@ -2,7 +2,10 @@ import os
 import json
 import logging
 from typing import Dict, Any
-from ..ai.model_provider import get_provider  # FIX: model_provider lives in ai/, not agents/
+try:
+    from ai.model_provider import get_provider
+except ImportError:
+    from ..ai.model_provider import get_provider
 from .models import GoalAnalysis
 
 logger = logging.getLogger(__name__)

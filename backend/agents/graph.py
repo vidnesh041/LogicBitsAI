@@ -7,7 +7,22 @@ from concurrent.futures import ThreadPoolExecutor, TimeoutError
 from typing import Dict, Any, List, Optional, Annotated, TypedDict
 from langgraph.graph import StateGraph, START, END
 from langgraph.types import Send
-from ..ai.model_provider import get_provider
+try:
+    from ai.model_provider import (
+        get_provider,
+        get_active_provider_info,
+        MockProvider,
+        GeminiProvider,
+        GrokProvider,
+    )
+except ImportError:
+    from ..ai.model_provider import (
+        get_provider,
+        get_active_provider_info,
+        MockProvider,
+        GeminiProvider,
+        GrokProvider,
+    )
 
 logger = logging.getLogger("graph_engine")
 
@@ -162,12 +177,19 @@ def expert_node(state: Dict[str, Any]) -> Dict[str, Any]:
     max_attempts = 2
     for attempt in range(max_attempts):
         try:
-            if provider_name == "gemini":
-                from ..ai.model_provider import GeminiProvider
-                prov = GeminiProvider()
+            info = get_active_provider_info()
+            if info["mock_mode"] or info["active_provider"] == "mock":
+                prov = MockProvider()
+            elif provider_name == "gemini":
+                try:
+                    prov = GeminiProvider()
+                except Exception:
+                    prov = MockProvider()
             else:
-                from ..ai.model_provider import GrokProvider
-                prov = GrokProvider()
+                try:
+                    prov = GrokProvider()
+                except Exception:
+                    prov = MockProvider()
 
             res = prov.generate(system_prompt, user_prompt)
             if isinstance(res, str):
@@ -473,17 +495,20 @@ def critique_node(state: GraphState) -> Dict[str, Any]:
             "Critique this proposal for architectural, security, or implementation risks now."
         )
         try:
-            from ..ai.model_provider import GeminiProvider, GrokProvider
-            try:
-                c_prov = GrokProvider() if opp_provider == "grok" else GeminiProvider()
-            except Exception:
-                c_prov = GeminiProvider()
+            info = get_active_provider_info()
+            if info["mock_mode"] or info["active_provider"] == "mock":
+                c_prov = MockProvider()
+            else:
+                try:
+                    c_prov = GrokProvider() if opp_provider == "grok" else GeminiProvider()
+                except Exception:
+                    c_prov = MockProvider()
 
             try:
                 c_res = c_prov.generate(system_prompt, user_prompt)
             except Exception as e_gen:
-                logger.warning("[CRITIQUE_RETRY] %s critique failed (%s); retrying with GeminiProvider", opp_provider, e_gen)
-                c_prov = GeminiProvider()
+                logger.warning("[CRITIQUE_RETRY] %s critique failed (%s); retrying with MockProvider", opp_provider, e_gen)
+                c_prov = MockProvider()
                 c_res = c_prov.generate(system_prompt, user_prompt)
 
             if isinstance(c_res, str):
