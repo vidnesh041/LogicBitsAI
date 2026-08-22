@@ -33,7 +33,9 @@ export function generateClientSideAnalysis(goal: string, projectId: string): Cli
   let domain = "Software Engineering & Web Systems";
   let complexity: "low" | "medium" | "high" = "high";
 
-  if (lower.includes("attendance") || lower.includes("student") || lower.includes("employee") || lower.includes("hr")) {
+  if (lower.includes("instagram") || lower.includes("social") || lower.includes("photo") || lower.includes("feed") || lower.includes("tiktok") || lower.includes("twitter")) {
+    domain = "Social Media & Real-Time Content Systems";
+  } else if (lower.includes("attendance") || lower.includes("student") || lower.includes("employee") || lower.includes("hr")) {
     domain = "Web Application & HR Operations";
   } else if (lower.includes("trading") || lower.includes("crypto") || lower.includes("bank") || lower.includes("finance")) {
     domain = "Finance & FinTech Architecture";
@@ -67,7 +69,30 @@ export function generateClientSideAnalysis(goal: string, projectId: string): Cli
     },
   ];
 
-  if (domain.includes("HR") || lower.includes("attendance")) {
+  if (domain.includes("Social Media")) {
+    roles = [
+      {
+        name: "UI/UX & Feed Engineer",
+        description: "Designs responsive stories carousel, infinite feed scrolling, and modal interactions.",
+        responsibilities: ["Build interactive feed layout", "Implement double-tap to like animations", "Design responsive media viewer"],
+      },
+      {
+        name: "Realtime API & Socket Engineer",
+        description: "Builds WebSocket event channels for instant notifications, comments, and direct messaging.",
+        responsibilities: ["Handle real-time comment streams", "Build media upload pipeline", "Manage user session authentication"],
+      },
+      {
+        name: "Media & Graph Database Architect",
+        description: "Designs optimized database models for follower graphs, post indexing, and CDN asset delivery.",
+        responsibilities: ["Index follower/following graph relationships", "Structure post metadata and engagement metrics", "Optimize image delivery caching"],
+      },
+      {
+        name: "Trust & Safety Specialist",
+        description: "Implements content moderation filters, rate limiting, and privacy settings.",
+        responsibilities: ["Enforce spam prevention filters", "Audit account security protocols", "Configure reporting workflows"],
+      },
+    ];
+  } else if (domain.includes("HR") || lower.includes("attendance")) {
     roles = [
       {
         name: "UI/UX & Portal Engineer",
@@ -109,8 +134,6 @@ export function generateClientSideAnalysis(goal: string, projectId: string): Cli
     },
   ]);
 
-  const timestamp = new Date().toLocaleTimeString();
-
   return {
     status: "success",
     project_id: projectId,
@@ -137,9 +160,9 @@ export function generateClientSideAnalysis(goal: string, projectId: string): Cli
       subtasks: subtasks,
     },
     events: [
-      { type: "GOAL_RECEIVED", data: { message: `Initializing Swarm Engine for goal: '${goal}'` } },
-      { type: "DOMAIN_CLASSIFIED", data: { message: `Classified domain as '${domain}' (${complexity} complexity)` } },
-      { type: "ORGANIZATION_CREATED", data: { message: `Formed team of ${roles.length} specialized AI agents.` } },
+      { type: "GOAL_RECEIVED", data: { goal: goal, message: `Received goal: '${goal}'` } },
+      { type: "GOAL_ANALYZED", data: { domain: domain, complexity: complexity, roles: roles.map(r => r.name), role_count: roles.length, message: `Classified domain as '${domain}'` } },
+      { type: "ORGANIZATION_CREATED", data: { team_size: roles.length, roles: roles, message: `Formed team of ${roles.length} specialized AI agents.` } },
     ],
   };
 }
@@ -148,12 +171,417 @@ export function generateClientSideExecution(goal: string, domain: string, roles:
   const now = new Date().toLocaleTimeString();
   const lowerGoal = goal.toLowerCase();
 
-  const isWebGoal = lowerGoal.includes("website") || lowerGoal.includes("app") || lowerGoal.includes("system") || lowerGoal.includes("portal") || lowerGoal.includes("dashboard") || lowerGoal.includes("store");
+  const isWebGoal = lowerGoal.includes("website") || lowerGoal.includes("app") || lowerGoal.includes("system") || lowerGoal.includes("portal") || lowerGoal.includes("dashboard") || lowerGoal.includes("store") || lowerGoal.includes("clone") || lowerGoal.includes("instagram");
   const deliverableType = isWebGoal ? "code" : "document";
 
   let finalCode = "";
   if (isWebGoal) {
-    if (lowerGoal.includes("attendance")) {
+    if (lowerGoal.includes("instagram") || lowerGoal.includes("social") || lowerGoal.includes("photo") || lowerGoal.includes("feed")) {
+      finalCode = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InstaVibe — Interactive Social Media Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .story-gradient { background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes heart-burst {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(1); opacity: 0; }
+    }
+    .heart-pop { animation: heart-burst 0.75s ease-out forwards; }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen">
+  
+  <div class="flex max-w-6xl mx-auto">
+    
+    <!-- LEFT NAVIGATION SIDEBAR -->
+    <aside class="hidden md:flex flex-col justify-between w-64 h-screen sticky top-0 border-r border-zinc-800 p-5 shrink-0">
+      <div class="space-y-7">
+        <div class="flex items-center gap-2 py-2">
+          <span class="text-2xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">InstaVibe</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 font-bold">PRO</span>
+        </div>
+
+        <nav class="space-y-2">
+          <button onclick="switchTab('feed')" id="nav-feed" class="w-full flex items-center gap-4 px-3 py-3 rounded-xl bg-zinc-900 text-white font-bold text-sm hover:bg-zinc-800 transition-all">
+            <span class="text-lg">🏠</span> Home
+          </button>
+          <button onclick="switchTab('explore')" id="nav-explore" class="w-full flex items-center gap-4 px-3 py-3 rounded-xl text-zinc-400 font-medium text-sm hover:bg-zinc-900 hover:text-white transition-all">
+            <span class="text-lg">🔍</span> Explore
+          </button>
+          <button onclick="switchTab('messages')" id="nav-messages" class="w-full flex items-center gap-4 px-3 py-3 rounded-xl text-zinc-400 font-medium text-sm hover:bg-zinc-900 hover:text-white transition-all">
+            <span class="text-lg">💬</span> Direct Messages
+            <span class="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-red-600 text-white font-bold">3</span>
+          </button>
+          <button onclick="switchTab('notifications')" id="nav-notifications" class="w-full flex items-center gap-4 px-3 py-3 rounded-xl text-zinc-400 font-medium text-sm hover:bg-zinc-900 hover:text-white transition-all">
+            <span class="text-lg">❤️</span> Notifications
+          </button>
+          <button onclick="openCreateModal()" class="w-full flex items-center gap-4 px-3 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-red-600 text-white font-extrabold text-sm hover:opacity-95 transition-all shadow-lg">
+            <span class="text-lg">➕</span> New Post
+          </button>
+        </nav>
+      </div>
+
+      <div class="pt-4 border-t border-zinc-800">
+        <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-zinc-900 cursor-pointer">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-zinc-700">
+          <div>
+            <p class="text-xs font-bold text-white">alex_creator</p>
+            <p class="text-[11px] text-zinc-500">Alex Rivera</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 min-h-screen py-4 md:py-6 px-4 md:px-8 max-w-2xl mx-auto space-y-6">
+      
+      <!-- STORIES TRAY -->
+      <section class="flex items-center gap-4 overflow-x-auto no-scrollbar py-2 border-b border-zinc-800/80">
+        <!-- Your Story -->
+        <div onclick="openCreateModal()" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0">
+          <div class="relative w-16 h-16 rounded-full p-[2px] border-2 border-dashed border-zinc-600 flex items-center justify-center bg-zinc-900">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="w-full h-full rounded-full object-cover opacity-80">
+            <span class="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-blue-500 text-white text-xs font-bold flex items-center justify-center">+</span>
+          </div>
+          <span class="text-[11px] text-zinc-400 font-medium">Your Story</span>
+        </div>
+
+        <!-- Friends Stories -->
+        <div onclick="viewStory('elena_travels')" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0">
+          <div class="w-16 h-16 rounded-full p-[2px] story-gradient flex items-center justify-center">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" class="w-full h-full rounded-full object-cover border-2 border-black">
+          </div>
+          <span class="text-[11px] text-zinc-300 font-medium truncate max-w-[64px]">elena_t</span>
+        </div>
+
+        <div onclick="viewStory('marcus_dev')" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0">
+          <div class="w-16 h-16 rounded-full p-[2px] story-gradient flex items-center justify-center">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" class="w-full h-full rounded-full object-cover border-2 border-black">
+          </div>
+          <span class="text-[11px] text-zinc-300 font-medium truncate max-w-[64px]">marcus_d</span>
+        </div>
+
+        <div onclick="viewStory('sarah_design')" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0">
+          <div class="w-16 h-16 rounded-full p-[2px] story-gradient flex items-center justify-center">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80" class="w-full h-full rounded-full object-cover border-2 border-black">
+          </div>
+          <span class="text-[11px] text-zinc-300 font-medium truncate max-w-[64px]">sarah_ux</span>
+        </div>
+
+        <div onclick="viewStory('nature_pulse')" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0">
+          <div class="w-16 h-16 rounded-full p-[2px] story-gradient flex items-center justify-center">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80" class="w-full h-full rounded-full object-cover border-2 border-black">
+          </div>
+          <span class="text-[11px] text-zinc-300 font-medium truncate max-w-[64px]">nature_p</span>
+        </div>
+      </section>
+
+      <!-- FEED POSTS CONTAINER -->
+      <section id="feed-container" class="space-y-8">
+        
+        <!-- POST 1 -->
+        <article class="bg-zinc-950 border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl">
+          <!-- Post Header -->
+          <div class="flex items-center justify-between p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full p-[2px] story-gradient">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" class="w-full h-full rounded-full object-cover border border-black">
+              </div>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-extrabold text-white">elena_travels</span>
+                  <span class="text-blue-500 text-[11px]">✓</span>
+                </div>
+                <p class="text-[10px] text-zinc-400">Kyoto, Japan • 2h ago</p>
+              </div>
+            </div>
+            <button class="text-zinc-400 hover:text-white text-sm">•••</button>
+          </div>
+
+          <!-- Post Media with double-tap heart -->
+          <div class="relative bg-zinc-900 cursor-pointer overflow-hidden select-none" ondblclick="toggleLike('post-1')">
+            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=900&auto=format&fit=crop&q=80" alt="Kyoto Shrine" class="w-full max-h-[500px] object-cover">
+            <div id="heart-anim-post-1" class="absolute inset-0 flex items-center justify-center pointer-events-none hidden">
+              <span class="text-7xl heart-pop">❤️</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons & Comments -->
+          <div class="p-4 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4 text-xl">
+                <button onclick="toggleLike('post-1')" id="btn-like-post-1" class="hover:scale-125 transition-transform text-white">🤍</button>
+                <button onclick="focusComment('comment-input-1')" class="hover:scale-125 transition-transform text-white">💬</button>
+                <button onclick="sharePost('Kyoto Post')" class="hover:scale-125 transition-transform text-white">✈️</button>
+              </div>
+              <button onclick="toggleBookmark(this)" class="text-xl hover:scale-125 transition-transform text-white">🔖</button>
+            </div>
+
+            <div>
+              <p class="text-xs font-bold text-white"><span id="likes-post-1">1,482</span> likes</p>
+              <p class="text-xs text-zinc-300 mt-1">
+                <span class="font-bold text-white mr-1.5">elena_travels</span>
+                Early morning peace in the heart of Arashiyama bamboo forest. Pure serenity ✨🎋
+              </p>
+            </div>
+
+            <!-- Comments List -->
+            <div id="comments-post-1" class="space-y-1 pt-1 text-xs text-zinc-300">
+              <p><span class="font-bold text-white mr-1">marcus_dev</span> Absolutely magical shot! 📷</p>
+              <p><span class="font-bold text-white mr-1">sarah_ux</span> Adding this to my dream travel list 😍</p>
+            </div>
+
+            <!-- Comment Input -->
+            <form onsubmit="submitComment(event, 'post-1', 'comment-input-1')" class="flex items-center gap-2 pt-2 border-t border-zinc-900">
+              <input type="text" id="comment-input-1" placeholder="Add a comment…" class="flex-1 bg-transparent text-xs text-white placeholder-zinc-500 outline-none">
+              <button type="submit" class="text-xs font-bold text-blue-500 hover:text-blue-400">Post</button>
+            </form>
+          </div>
+        </article>
+
+        <!-- POST 2 -->
+        <article class="bg-zinc-950 border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl">
+          <div class="flex items-center justify-between p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full p-[2px] story-gradient">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" class="w-full h-full rounded-full object-cover border border-black">
+              </div>
+              <div>
+                <span class="text-xs font-extrabold text-white">marcus_dev</span>
+                <p class="text-[10px] text-zinc-400">San Francisco, CA • 5h ago</p>
+              </div>
+            </div>
+            <button class="text-zinc-400 hover:text-white text-sm">•••</button>
+          </div>
+
+          <div class="relative bg-zinc-900 cursor-pointer overflow-hidden select-none" ondblclick="toggleLike('post-2')">
+            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=900&auto=format&fit=crop&q=80" alt="Coding Workspace" class="w-full max-h-[500px] object-cover">
+            <div id="heart-anim-post-2" class="absolute inset-0 flex items-center justify-center pointer-events-none hidden">
+              <span class="text-7xl heart-pop">❤️</span>
+            </div>
+          </div>
+
+          <div class="p-4 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4 text-xl">
+                <button onclick="toggleLike('post-2')" id="btn-like-post-2" class="hover:scale-125 transition-transform text-white">🤍</button>
+                <button onclick="focusComment('comment-input-2')" class="hover:scale-125 transition-transform text-white">💬</button>
+                <button onclick="sharePost('Setup Post')" class="hover:scale-125 transition-transform text-white">✈️</button>
+              </div>
+              <button onclick="toggleBookmark(this)" class="text-xl hover:scale-125 transition-transform text-white">🔖</button>
+            </div>
+
+            <div>
+              <p class="text-xs font-bold text-white"><span id="likes-post-2">894</span> likes</p>
+              <p class="text-xs text-zinc-300 mt-1">
+                <span class="font-bold text-white mr-1.5">marcus_dev</span>
+                Late night coding session shipping our multi-agent autonomous framework. 🚀💻
+              </p>
+            </div>
+
+            <div id="comments-post-2" class="space-y-1 pt-1 text-xs text-zinc-300">
+              <p><span class="font-bold text-white mr-1">alex_creator</span> Clean mechanical keyboard setup!</p>
+            </div>
+
+            <form onsubmit="submitComment(event, 'post-2', 'comment-input-2')" class="flex items-center gap-2 pt-2 border-t border-zinc-900">
+              <input type="text" id="comment-input-2" placeholder="Add a comment…" class="flex-1 bg-transparent text-xs text-white placeholder-zinc-500 outline-none">
+              <button type="submit" class="text-xs font-bold text-blue-500 hover:text-blue-400">Post</button>
+            </form>
+          </div>
+        </article>
+
+      </section>
+    </main>
+
+    <!-- RIGHT SUGGESTIONS PANEL -->
+    <aside class="hidden lg:block w-72 p-6 border-l border-zinc-800/80 space-y-6 shrink-0">
+      <div class="flex items-center justify-between">
+        <p class="text-xs font-bold text-zinc-400">Suggested for you</p>
+        <button class="text-[11px] font-bold text-white hover:underline">See All</button>
+      </div>
+
+      <div class="space-y-4">
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center gap-3">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80" class="w-8 h-8 rounded-full object-cover">
+            <div>
+              <p class="font-bold text-white">david_ai</p>
+              <p class="text-[10px] text-zinc-500">Followed by marcus_dev</p>
+            </div>
+          </div>
+          <button onclick="toggleFollow(this)" class="text-xs font-bold text-blue-500 hover:text-white">Follow</button>
+        </div>
+
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center gap-3">
+            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&auto=format&fit=crop&q=80" class="w-8 h-8 rounded-full object-cover">
+            <div>
+              <p class="font-bold text-white">clara_visuals</p>
+              <p class="text-[10px] text-zinc-500">New on InstaVibe</p>
+            </div>
+          </div>
+          <button onclick="toggleFollow(this)" class="text-xs font-bold text-blue-500 hover:text-white">Follow</button>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- NEW POST MODAL -->
+  <div id="create-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-2xl p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+        <h3 class="font-extrabold text-sm text-white">Create New Post</h3>
+        <button onclick="closeCreateModal()" class="text-zinc-400 hover:text-white text-lg">✕</button>
+      </div>
+
+      <form onsubmit="handleCreatePost(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-zinc-400 mb-1">Image URL</label>
+          <input type="url" id="post-img-url" required value="https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=900&auto=format&fit=crop&q=80" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-pink-500">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-400 mb-1">Caption</label>
+          <textarea id="post-caption" rows="3" required placeholder="Write an inspiring caption…" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-pink-500 resize-none"></textarea>
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-pink-600 to-red-600 text-white font-extrabold text-xs rounded-xl shadow-lg hover:opacity-95">
+          Share to Feed 🚀
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const likesData = { 'post-1': 1482, 'post-2': 894 };
+    const userLiked = { 'post-1': false, 'post-2': false };
+
+    function toggleLike(postId) {
+      const btn = document.getElementById('btn-like-' + postId);
+      const likesEl = document.getElementById('likes-' + postId);
+      const animEl = document.getElementById('heart-anim-' + postId);
+
+      if (!userLiked[postId]) {
+        userLiked[postId] = true;
+        likesData[postId] += 1;
+        if (btn) btn.innerHTML = '❤️';
+        if (btn) btn.classList.add('text-red-500');
+        if (animEl) {
+          animEl.classList.remove('hidden');
+          setTimeout(() => animEl.classList.add('hidden'), 750);
+        }
+      } else {
+        userLiked[postId] = false;
+        likesData[postId] -= 1;
+        if (btn) btn.innerHTML = '🤍';
+        if (btn) btn.classList.remove('text-red-500');
+      }
+      if (likesEl) likesEl.innerText = likesData[postId].toLocaleString();
+    }
+
+    function toggleBookmark(btn) {
+      if (btn.innerText === '🔖') {
+        btn.innerText = '🏷️';
+        alert('Post saved to your bookmarks collection!');
+      } else {
+        btn.innerText = '🔖';
+      }
+    }
+
+    function toggleFollow(btn) {
+      if (btn.innerText === 'Follow') {
+        btn.innerText = 'Following';
+        btn.className = 'text-xs font-bold text-zinc-400 hover:text-white';
+      } else {
+        btn.innerText = 'Follow';
+        btn.className = 'text-xs font-bold text-blue-500 hover:text-white';
+      }
+    }
+
+    function focusComment(inputId) {
+      const el = document.getElementById(inputId);
+      if (el) el.focus();
+    }
+
+    function submitComment(e, postId, inputId) {
+      e.preventDefault();
+      const input = document.getElementById(inputId);
+      const text = input.value.trim();
+      if (!text) return;
+
+      const container = document.getElementById('comments-' + postId);
+      const p = document.createElement('p');
+      p.innerHTML = \`<span class="font-bold text-white mr-1">alex_creator</span> \${text}\`;
+      container.appendChild(p);
+      input.value = '';
+    }
+
+    function openCreateModal() {
+      document.getElementById('create-modal').classList.remove('hidden');
+    }
+
+    function closeCreateModal() {
+      document.getElementById('create-modal').classList.add('hidden');
+    }
+
+    function handleCreatePost(e) {
+      e.preventDefault();
+      const imgUrl = document.getElementById('post-img-url').value;
+      const caption = document.getElementById('post-caption').value;
+      const feed = document.getElementById('feed-container');
+
+      const newId = 'post-' + Date.now();
+      likesData[newId] = 1;
+      userLiked[newId] = true;
+
+      const article = document.createElement('article');
+      article.className = "bg-zinc-950 border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl animate-in fade-in duration-300";
+      article.innerHTML = \`
+        <div class="flex items-center justify-between p-4">
+          <div class="flex items-center gap-3">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover border border-zinc-700">
+            <div>
+              <span class="text-xs font-extrabold text-white">alex_creator</span>
+              <p class="text-[10px] text-zinc-400">Just now</p>
+            </div>
+          </div>
+        </div>
+        <img src="\${imgUrl}" class="w-full max-h-[500px] object-cover">
+        <div class="p-4 space-y-2.5">
+          <p class="text-xs font-bold text-white"><span id="likes-\${newId}">1</span> like</p>
+          <p class="text-xs text-zinc-300"><span class="font-bold text-white mr-1.5">alex_creator</span> \${caption}</p>
+        </div>
+      \`;
+
+      feed.prepend(article);
+      closeCreateModal();
+      document.getElementById('post-caption').value = '';
+      alert('Post published successfully to the live feed! 🎉');
+    }
+
+    function viewStory(user) {
+      alert('Viewing 24-hour story highlight for @' + user + ' ✨');
+    }
+
+    function sharePost(title) {
+      alert('Direct link to ' + title + ' copied to clipboard! 🔗');
+    }
+
+    function switchTab(tab) {
+      alert('Switched to ' + tab.toUpperCase() + ' tab.');
+    }
+  </script>
+</body>
+</html>`;
+    } else if (lowerGoal.includes("attendance")) {
       finalCode = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -168,8 +596,6 @@ export function generateClientSideExecution(goal: string, domain: string, roles:
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen">
   <div class="max-w-7xl mx-auto px-4 py-8 space-y-8">
-    
-    <!-- Top Header -->
     <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
       <div>
         <div class="flex items-center gap-3">
@@ -183,13 +609,12 @@ export function generateClientSideExecution(goal: string, domain: string, roles:
           <p class="text-xs text-slate-400 font-mono" id="current-time">--:--:--</p>
           <p class="text-[10px] text-emerald-400 font-bold">● System Operational</p>
         </div>
-        <button onclick="checkInUser()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-all shadow-lg">
+        <button onclick="alert('Quick Clock In recorded!')" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-all shadow-lg">
           ⏱️ Quick Clock In
         </button>
       </div>
     </header>
 
-    <!-- Key Metrics Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-1">
         <p class="text-xs text-slate-400 font-medium">Total Registered</p>
@@ -212,118 +637,7 @@ export function generateClientSideExecution(goal: string, domain: string, roles:
         <p class="text-[10px] text-red-500">Approved leaves: 3</p>
       </div>
     </div>
-
-    <!-- Clock In Form & Interactive Table -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      
-      <!-- Check In Panel -->
-      <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4">
-        <h2 class="text-sm font-bold text-white uppercase tracking-wider border-b border-slate-800 pb-3">Digital Attendance Portal</h2>
-        <form onsubmit="handleManualEntry(event)" class="space-y-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">User ID / Badge Number</label>
-            <input type="text" id="badge-input" placeholder="e.g. EMP-2026-042" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
-            <input type="text" id="name-input" placeholder="e.g. Alex Rivera" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Department / Class</label>
-            <select id="dept-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-              <option>Engineering & Software</option>
-              <option>Data Science & AI</option>
-              <option>Operations & Management</option>
-              <option>Human Resources</option>
-            </select>
-          </div>
-          <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl transition-all shadow-lg">
-            Record Attendance Log
-          </button>
-        </form>
-      </div>
-
-      <!-- Attendance Records Table -->
-      <div class="lg:col-span-2 bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-          <h2 class="text-sm font-bold text-white uppercase tracking-wider">Live Attendance Log (Today)</h2>
-          <span class="text-xs text-emerald-400 font-mono">Filter: All Records</span>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
-            <thead>
-              <tr class="border-b border-slate-800 text-slate-400">
-                <th class="pb-3 font-semibold">User</th>
-                <th class="pb-3 font-semibold">Department</th>
-                <th class="pb-3 font-semibold">Clock In</th>
-                <th class="pb-3 font-semibold">Status</th>
-              </tr>
-            </thead>
-            <tbody id="log-table-body" class="divide-y divide-slate-800/60 text-slate-300">
-              <tr>
-                <td class="py-3 font-medium text-white">Alex Rivera <span class="text-[10px] text-slate-500 block">EMP-101</span></td>
-                <td class="py-3 text-slate-400">Engineering & Software</td>
-                <td class="py-3 font-mono">08:45 AM</td>
-                <td class="py-3"><span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 text-[10px] font-bold border border-emerald-800">On Time</span></td>
-              </tr>
-              <tr>
-                <td class="py-3 font-medium text-white">Sophia Chen <span class="text-[10px] text-slate-500 block">EMP-104</span></td>
-                <td class="py-3 text-slate-400">Data Science & AI</td>
-                <td class="py-3 font-mono">09:12 AM</td>
-                <td class="py-3"><span class="px-2 py-0.5 rounded-full bg-amber-950 text-amber-400 text-[10px] font-bold border border-amber-800">Late (12m)</span></td>
-              </tr>
-              <tr>
-                <td class="py-3 font-medium text-white">Marcus Vance <span class="text-[10px] text-slate-500 block">EMP-109</span></td>
-                <td class="py-3 text-slate-400">Operations</td>
-                <td class="py-3 font-mono">08:50 AM</td>
-                <td class="py-3"><span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 text-[10px] font-bold border border-emerald-800">On Time</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
   </div>
-
-  <script>
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('current-time').innerText = now.toLocaleTimeString();
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    function checkInUser() {
-      alert("Quick Biometric Clock In Recorded successfully!");
-    }
-
-    function handleManualEntry(e) {
-      e.preventDefault();
-      const name = document.getElementById('name-input').value;
-      const badge = document.getElementById('badge-input').value;
-      const dept = document.getElementById('dept-input').value;
-      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-      const tbody = document.getElementById('log-table-body');
-      const tr = document.createElement('tr');
-      tr.className = "animate-in fade-in duration-300";
-      tr.innerHTML = \`
-        <td class="py-3 font-medium text-white">\${name} <span class="text-[10px] text-slate-500 block">\${badge}</span></td>
-        <td class="py-3 text-slate-400">\${dept}</td>
-        <td class="py-3 font-mono">\${now}</td>
-        <td class="py-3"><span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 text-[10px] font-bold border border-emerald-800">On Time</span></td>
-      \`;
-      tbody.prepend(tr);
-
-      const presentEl = document.getElementById('stat-present');
-      presentEl.innerText = parseInt(presentEl.innerText) + 1;
-
-      document.getElementById('name-input').value = '';
-      document.getElementById('badge-input').value = '';
-    }
-  </script>
 </body>
 </html>`;
     } else {
